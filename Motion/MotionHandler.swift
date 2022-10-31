@@ -16,6 +16,8 @@ class MotionHandler: ObservableObject {
         let y: Double
         let z: Double
     }
+    
+    static let updateInterval = 5.0
 
     @Published var acceleration: Values = .init(x: 0, y: 0, z: 0)
     @Published var accelerations = [Values]()
@@ -27,9 +29,9 @@ class MotionHandler: ObservableObject {
     @Published var gravities = [Values]()
     
     init() {
-        manager.accelerometerUpdateInterval = 0.1
-        manager.gyroUpdateInterval = 0.1
-        manager.magnetometerUpdateInterval = 0.1
+        manager.accelerometerUpdateInterval = Self.updateInterval
+        manager.gyroUpdateInterval = Self.updateInterval
+        manager.magnetometerUpdateInterval = Self.updateInterval
 
         manager.startDeviceMotionUpdates(to: .main) { motion, _ in
             guard let motion = motion else { return }
@@ -42,19 +44,19 @@ class MotionHandler: ObservableObject {
 
     private func readAcceleration( _ values: CMAcceleration) {
         let acceleration = Values(x: values.x, y: values.y, z: values.z)
-        accelerations.append(acceleration)
+       // accelerations.append(acceleration)
         self.acceleration = acceleration
     }
     
     private func readMagneticField(_ values: CMCalibratedMagneticField) {
         let magneticField = Values(x: values.field.x, y: values.field.x, z: values.field.z)
-        magneticFields.append(magneticField)
+      //  magneticFields.append(magneticField)
         self.magneticField = magneticField
     }
     
     private func readGravity( _ values: CMAcceleration) {
         let gravity = Values(x: values.x, y: values.y, z: values.z)
-        gravities.append(gravity)
+       // gravities.append(gravity)
         self.gravity = gravity
     }
     
