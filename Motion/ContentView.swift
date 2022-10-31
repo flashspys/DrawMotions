@@ -10,13 +10,12 @@ import SwiftUI
 struct ContentView: View {
     
     @StateObject var motionHandler = MotionHandler()
+    @StateObject var soundHandler = SoundHandler()
     
     var rotations: [MotionHandler.Values] {
         motionHandler.rotations
     }
-    var lastRotation: MotionHandler.Values {
-        motionHandler.rotation
-    }
+
     var screenW: CGFloat {
         UIScreen.main.bounds.width
     }
@@ -31,7 +30,8 @@ struct ContentView: View {
             //            drawGravity()
             //            drawRotation()
 //            drawLines()
-            drawCircles()
+//            drawCircles()
+            drawSoundCircles()
         }.padding()
     }
     
@@ -43,6 +43,17 @@ struct ContentView: View {
                               blue: 1.0 * (fabs(rotation.z) * 10)), lineWidth: 1)
                 .frame(width: screenW * fabs(rotation.x),
                        height: screenH * fabs(rotation.y))
+        }
+    }
+    
+    func drawSoundCircles() -> some View {
+        ForEach(soundHandler.decibels, id: \.id) {decibel in
+            Circle()
+                .stroke(Color(red: 1.0 * Double(decibel.value),
+                              green: 1.0 * Double(decibel.value),
+                              blue: 1.0 * Double(decibel.value)), lineWidth: 1)
+                .frame(width: screenW * CGFloat(decibel.value),
+                       height: screenH * CGFloat(decibel.value))
         }
     }
     
