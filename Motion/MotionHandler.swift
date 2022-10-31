@@ -11,34 +11,20 @@ import CoreMotion
 class MotionHandler: ObservableObject {
     let manager = CMMotionManager()
     
-    struct Acceleration {
-        let x: Double
-        let y: Double
-        let z: Double
-    }
-    
-    struct Rotation {
-        let x: Double
-        let y: Double
-        let z: Double
-    }
-    
-    struct MagneticField {
-        let x: Double
-        let y: Double
-        let z: Double
-    }
-    
-    struct Gravity {
+    struct Values {
         let x: Double
         let y: Double
         let z: Double
     }
 
-    @Published var acceleration: Acceleration?
-    @Published var rotation: Rotation?
-    @Published var magneticField: MagneticField?
-    @Published var gravity: Gravity?
+    @Published var acceleration: Values = .init(x: 0, y: 0, z: 0)
+    @Published var accelerations = [Values]()
+    @Published var rotation: Values = .init(x: 0, y: 0, z: 0)
+    @Published var rotations = [Values]()
+    @Published var magneticField: Values = .init(x: 0, y: 0, z: 0)
+    @Published var magneticFields = [Values]()
+    @Published var gravity: Values = .init(x: 0, y: 0, z: 0)
+    @Published var gravities = [Values]()
     
     init() {
         manager.accelerometerUpdateInterval = 0.1
@@ -55,18 +41,26 @@ class MotionHandler: ObservableObject {
     }
 
     private func readAcceleration( _ values: CMAcceleration) {
-        self.acceleration = Acceleration(x: values.x, y: values.y, z: values.z)
+        let acceleration = Values(x: values.x, y: values.y, z: values.z)
+        accelerations.append(acceleration)
+        self.acceleration = acceleration
     }
     
     private func readMagneticField(_ values: CMCalibratedMagneticField) {
-        self.magneticField = MagneticField(x: values.field.x, y: values.field.x, z: values.field.z)
+        let magneticField = Values(x: values.field.x, y: values.field.x, z: values.field.z)
+        magneticFields.append(magneticField)
+        self.magneticField = magneticField
     }
     
     private func readGravity( _ values: CMAcceleration) {
-        self.gravity = Gravity(x: values.x, y: values.y, z: values.z)
+        let gravity = Values(x: values.x, y: values.y, z: values.z)
+        gravities.append(gravity)
+        self.gravity = gravity
     }
     
     private func readRotation(_ values: CMRotationRate) {
-        self.rotation = Rotation(x: values.x, y: values.y, z: values.z)
+        let rotation = Values(x: values.x, y: values.y, z: values.z)
+        rotations.append(rotation)
+        self.rotation = rotation
     }
 }
