@@ -33,8 +33,8 @@ struct ContentView: View {
 //            drawCircles()
 //            drawSoundCircles()
 //            drawAnimatedSineCurve()
-//            drawSoundSineCurves()
-            drawSoundSineArcs()
+            drawSoundSineCurves()
+//            drawSoundSineArcs()
         }
     }
     
@@ -50,22 +50,25 @@ struct ContentView: View {
     }
     
     func drawAnimatedSineCurve() -> some View {
-        Curve(xOffset: CGFloat(soundHandler.decibel.value))
+        Curve(amp: CGFloat(soundHandler.decibel.value))
             .stroke(Color(uiColor: .random()), lineWidth: 1)
             .animation(.easeInOut(duration: 1.0), value: soundHandler.decibel.value)
     }
     
     func drawSoundSineCurves() -> some View {
         ForEach(soundHandler.decibels, id: \.id) {decibel in
-            Curve(xOffset: CGFloat(decibel.value))
-                .stroke(Color(uiColor: .random()), lineWidth: 1)
+            Curve(amp: CGFloat(decibel.value))
+//                .stroke(Color(uiColor: .random()), lineWidth: 1)
+//                .stroke(Color(hue: 1.0, saturation: Double(decibel.value), brightness: Double(decibel.value)), lineWidth: 1)
+                .stroke(Color(hue: Double(decibel.value), saturation: 0.5, brightness: 1.0), lineWidth: 1)
+
         }
     }
     
     func drawSoundSineArcs() -> some View {
         ForEach(soundHandler.decibels, id: \.id) {decibel in
-            Arc(start: CGPoint(x: motionHandler.rotation.x, y: motionHandler.rotation.y),
-                radius: CGFloat(decibel.value))
+            Arc(start: CGPoint(x: motionHandler.gyro.x, y: motionHandler.gyro.y),
+                radius: CGFloat(decibel.value)/2)
                 .stroke(Color(uiColor: .random()), lineWidth: 1)
 //            Circle()
 //                .stroke(Color(red: 1.0 * Double(decibel.value),
@@ -130,18 +133,18 @@ extension Path {
 }
 
 struct Curve: Shape {
-    var xOffset: CGFloat
+    var amp: CGFloat
     var animatableData: CGFloat {
-        get { xOffset }
-        set { xOffset = newValue }
+        get { amp }
+        set { amp = newValue }
     }
     func path(in rect: CGRect) -> Path {
         var path = Path()
         let start = CGPoint(x: 0, y: rect.midY)
         path.move(to: start)
         path.addCurve(to: CGPoint(x: rect.maxX, y: rect.midY),
-                      control1: CGPoint(x: rect.midX, y: rect.midY - (rect.height * xOffset)),
-                      control2: CGPoint(x: rect.midX, y:rect.midY + (rect.height * xOffset)))
+                      control1: CGPoint(x: rect.midX, y: rect.midY - (rect.height * amp)),
+                      control2: CGPoint(x: rect.midX, y: rect.midY + (rect.height * amp)))
         return path
     }
 }
@@ -166,7 +169,8 @@ struct Arc: Shape {
 //    var fill: CGFloat
     func path(in rect: CGRect) -> Path {
         var path = Path()
-        path.addArc(center: start, radius: rect.size.width * radius, startAngle: .degrees(0), endAngle: .degrees(360), clockwise: true)
+        path.addArc(center: CGPoint(x: rect.midX - (rect.midX * start.x), y: rect.midY - (rect.midY * start.y)),
+                    radius: rect.size.width * radius, startAngle: .degrees(0), endAngle: .degrees(360), clockwise: true)
         return path
     }
 }
@@ -179,12 +183,13 @@ struct ContentView_Previews: PreviewProvider {
 
 extension UIColor {
     static func random() -> UIColor {
-        return UIColor(
-           red:   .random(),
-           green: .random(),
-           blue:  .random(),
-           alpha: 1.0
-        )
+//        return UIColor(
+//           red:   .random(),
+//           green: .random(),
+//           blue:  .random(),
+//           alpha: 1.0
+//        )
+        UIColor(hue: .random(), saturation: 0.8, brightness: 1.0, alpha: 1.0)
     }
 }
 

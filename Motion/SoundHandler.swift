@@ -49,6 +49,7 @@ class SoundHandler: ObservableObject {
                 audioRecorder.updateMeters()
                 let value = (100 + audioRecorder.peakPower(forChannel: 0)) / 100
                 self.decibel = Decibel(value: value)
+//                print(value)
                 self.decibels.append(self.decibel)
             }
         } catch {

@@ -27,18 +27,24 @@ class MotionHandler: ObservableObject {
     @Published var magneticFields = [Values]()
     @Published var gravity: Values = .init(x: 0, y: 0, z: 0)
     @Published var gravities = [Values]()
+    @Published var gyro: Values = .init(x: 0, y: 0, z: 0)
+    @Published var gyros = [Values]()
     
     init() {
         manager.accelerometerUpdateInterval = Self.updateInterval
         manager.gyroUpdateInterval = Self.updateInterval
         manager.magnetometerUpdateInterval = Self.updateInterval
-
-        manager.startDeviceMotionUpdates(to: .main) { motion, _ in
+        manager.gyroUpdateInterval = Self.updateInterval
+        manager.startDeviceMotionUpdates(using: .xMagneticNorthZVertical, to: .main) { motion, _ in
             guard let motion = motion else { return }
             self.readAcceleration(motion.userAcceleration)
             self.readMagneticField(motion.magneticField)
             self.readGravity(motion.gravity)
             self.readRotation(motion.rotationRate)
+        }
+        
+        manager.startGyroUpdates(to: .main) { data, _ in
+            self.readGyros(data)
         }
     }
 
@@ -56,13 +62,21 @@ class MotionHandler: ObservableObject {
     
     private func readGravity( _ values: CMAcceleration) {
         let gravity = Values(x: values.x, y: values.y, z: values.z)
-       // gravities.append(gravity)
+//        gravities.append(gravity)
         self.gravity = gravity
     }
     
     private func readRotation(_ values: CMRotationRate) {
         let rotation = Values(x: values.x, y: values.y, z: values.z)
-        rotations.append(rotation)
+       // rotations.append(rotation)
         self.rotation = rotation
+    }
+    
+    private func readGyros(_ values: CMGyroData?) {
+        guard let values = values?.rotationRate else { return }
+        let gyro = Values(x: values.x, y: values.y, z: values.z)
+      //  gyros.append(rotation)
+        print(gyro)
+        self.gyro = gyro
     }
 }
