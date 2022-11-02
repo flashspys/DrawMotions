@@ -32,10 +32,9 @@ struct ContentView: View {
 //            drawLines()
 //            drawCircles()
 //            drawSoundCircles()
-//            Curve(xOffset: CGFloat(soundHandler.decibel.value))
-//                .stroke(Color(uiColor: .random()), lineWidth: 1)
-//                .animation(.easeInOut(duration: 1.0), value: soundHandler.decibel.value)
-            drawSoundCircles()
+//            drawAnimatedSineCurve()
+//            drawSoundSineCurves()
+            drawSoundSineArcs()
         }
     }
     
@@ -50,21 +49,30 @@ struct ContentView: View {
         }
     }
     
-    func drawSoundCircles() -> some View {
+    func drawAnimatedSineCurve() -> some View {
+        Curve(xOffset: CGFloat(soundHandler.decibel.value))
+            .stroke(Color(uiColor: .random()), lineWidth: 1)
+            .animation(.easeInOut(duration: 1.0), value: soundHandler.decibel.value)
+    }
+    
+    func drawSoundSineCurves() -> some View {
         ForEach(soundHandler.decibels, id: \.id) {decibel in
             Curve(xOffset: CGFloat(decibel.value))
                 .stroke(Color(uiColor: .random()), lineWidth: 1)
         }
     }
     
-    func drawSoundSineCurves() -> some View {
+    func drawSoundSineArcs() -> some View {
         ForEach(soundHandler.decibels, id: \.id) {decibel in
-            Circle()
-                .stroke(Color(red: 1.0 * Double(decibel.value),
-                              green: 1.0 * Double(decibel.value),
-                              blue: 1.0 * Double(decibel.value)), lineWidth: 1)
-                .frame(width: screenW * CGFloat(decibel.value),
-                       height: screenH * CGFloat(decibel.value))
+            Arc(start: CGPoint(x: motionHandler.rotation.x, y: motionHandler.rotation.y),
+                radius: CGFloat(decibel.value))
+                .stroke(Color(uiColor: .random()), lineWidth: 1)
+//            Circle()
+//                .stroke(Color(red: 1.0 * Double(decibel.value),
+//                              green: 1.0 * Double(decibel.value),
+//                              blue: 1.0 * Double(decibel.value)), lineWidth: 1)
+//                .frame(width: screenW * CGFloat(decibel.value),
+//                       height: screenH * CGFloat(decibel.value))
         }
     }
     
@@ -149,6 +157,17 @@ struct Line: Shape {
             p.move(to: start)
             p.addLine(to: end)
         }
+    }
+}
+
+struct Arc: Shape {
+    var start: CGPoint
+    var radius: CGFloat
+//    var fill: CGFloat
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.addArc(center: start, radius: rect.size.width * radius, startAngle: .degrees(0), endAngle: .degrees(360), clockwise: true)
+        return path
     }
 }
 
