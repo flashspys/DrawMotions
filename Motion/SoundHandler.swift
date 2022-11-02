@@ -47,7 +47,7 @@ class SoundHandler: ObservableObject {
             decibelLevelTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) {[weak self] timer in
                 guard let self = self else { return }
                 audioRecorder.updateMeters()
-                let value = (100 + audioRecorder.peakPower(forChannel: 0))/100
+                let value = (100 + audioRecorder.peakPower(forChannel: 0)) / 100
                 self.decibel = Decibel(value: value)
                 self.decibels.append(self.decibel)
             }

@@ -31,8 +31,12 @@ struct ContentView: View {
             //            drawRotation()
 //            drawLines()
 //            drawCircles()
+//            drawSoundCircles()
+//            Curve(xOffset: CGFloat(soundHandler.decibel.value))
+//                .stroke(Color(uiColor: .random()), lineWidth: 1)
+//                .animation(.easeInOut(duration: 1.0), value: soundHandler.decibel.value)
             drawSoundCircles()
-        }.padding()
+        }
     }
     
     func drawCircles() -> some View {
@@ -47,6 +51,13 @@ struct ContentView: View {
     }
     
     func drawSoundCircles() -> some View {
+        ForEach(soundHandler.decibels, id: \.id) {decibel in
+            Curve(xOffset: CGFloat(decibel.value))
+                .stroke(Color(uiColor: .random()), lineWidth: 1)
+        }
+    }
+    
+    func drawSoundSineCurves() -> some View {
         ForEach(soundHandler.decibels, id: \.id) {decibel in
             Circle()
                 .stroke(Color(red: 1.0 * Double(decibel.value),
@@ -110,6 +121,23 @@ extension Path {
     }
 }
 
+struct Curve: Shape {
+    var xOffset: CGFloat
+    var animatableData: CGFloat {
+        get { xOffset }
+        set { xOffset = newValue }
+    }
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        let start = CGPoint(x: 0, y: rect.midY)
+        path.move(to: start)
+        path.addCurve(to: CGPoint(x: rect.maxX, y: rect.midY),
+                      control1: CGPoint(x: rect.midX, y: rect.midY - (rect.height * xOffset)),
+                      control2: CGPoint(x: rect.midX, y:rect.midY + (rect.height * xOffset)))
+        return path
+    }
+}
+
 struct Line: Shape {
     var start, end: CGPoint
     var animatableData: AnimatablePair<CGPoint.AnimatableData, CGPoint.AnimatableData> {
@@ -127,5 +155,22 @@ struct Line: Shape {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+    }
+}
+
+extension UIColor {
+    static func random() -> UIColor {
+        return UIColor(
+           red:   .random(),
+           green: .random(),
+           blue:  .random(),
+           alpha: 1.0
+        )
+    }
+}
+
+extension CGFloat {
+    static func random() -> CGFloat {
+        return CGFloat(arc4random()) / CGFloat(UInt32.max)
     }
 }
