@@ -15,6 +15,8 @@ class MotionHandler: ObservableObject {
         let x: Double
         let y: Double
         let z: Double
+        
+        let date = Date.timeIntervalSinceReferenceDate
     }
     
     static let updateInterval = 5.0
@@ -62,20 +64,20 @@ class MotionHandler: ObservableObject {
     
     private func readGravity( _ values: CMAcceleration) {
         let gravity = Values(x: values.x, y: values.y, z: values.z)
-//        gravities.append(gravity)
+        gravities.append(gravity)
         self.gravity = gravity
     }
     
     private func readRotation(_ values: CMRotationRate) {
         let rotation = Values(x: values.x, y: values.y, z: values.z)
-       // rotations.append(rotation)
+        rotations.append(rotation)
         self.rotation = rotation
     }
     
     private func readGyros(_ values: CMGyroData?) {
         guard let values = values?.rotationRate else { return }
         let gyro = Values(x: values.x, y: values.y, z: values.z)
-      //  gyros.append(rotation)
+        gyros.append(rotation)
         print(gyro)
         self.gyro = gyro
     }
