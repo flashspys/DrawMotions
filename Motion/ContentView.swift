@@ -34,7 +34,7 @@ struct ContentView: View {
 //            drawAnimatedSineCurve()
             drawSoundSineCurves()
 //            drawSoundSineArcs()
-        }
+        }.edgesIgnoringSafeArea(.all)
     }
     
     func drawCircles() -> some View {
@@ -67,11 +67,16 @@ struct ContentView: View {
     
     func drawSoundSineCurves() -> some View {
         ForEach(soundHandler.decibels, id: \.id) {decibel in
-            Curve(amp: CGFloat(decibel.value))
-//                .stroke(Color(uiColor: .random()), lineWidth: 1)
-//                .stroke(Color(hue: 1.0, saturation: Double(decibel.value), brightness: Double(decibel.value)), lineWidth: 1)
-//                .stroke(Color(hue: Double(decibel.value), saturation: 0.5, brightness: 1.0), lineWidth: 1)
-                .stroke(Color(uiColor: UIColor(red: 0.7/Double(decibel.value), green: 0.7/Double(decibel.value), blue: 0.7/Double(decibel.value), alpha: 1.0)), lineWidth: 1)
+            ZStack {
+//                Curve(amp: CGFloat(decibel.value))
+//                    .stroke(Color(uiColor: .random()), lineWidth: 1)
+    //                .stroke(Color(hue: 1.0, saturation: Double(decibel.value), brightness: Double(decibel.value)), lineWidth: 1)
+    //                .stroke(Color(hue: Double(decibel.value), saturation: 0.5, brightness: 1.0), lineWidth: 1)
+//                    .stroke(Color(uiColor: UIColor(red: 0.7/Double(decibel.value), green: 0.7/Double(decibel.value), blue: 0.7/Double(decibel.value), alpha: 1.0)), lineWidth: 1)
+                Curve(amp: CGFloat(decibel.value))
+                    .stroke(Color(uiColor: UIColor(red: 0.7/Double(decibel.value), green: 0.7/Double(decibel.value), blue: 0.7/Double(decibel.value), alpha: 1.0)), lineWidth: 1)
+                    .rotationEffect(.degrees(20*Double(decibel.value)))
+            }
 
         }
     }
