@@ -25,13 +25,12 @@ struct ContentView: View {
     
     var body: some View {
         ZStack {
-            
-            //            drawAcceleration()
-            //            drawGravity()
-            //            drawRotation()
+//            drawAcceleration()
+//            drawGravity()
+//            drawRotation()
 //            drawLines()
 //            drawCircles()
-//            drawSoundCircles()
+//            drawCirclesDepth()
 //            drawAnimatedSineCurve()
             drawSoundSineCurves()
 //            drawSoundSineArcs()
@@ -49,6 +48,17 @@ struct ContentView: View {
         }
     }
     
+    func drawCirclesDepth() -> some View {
+        ForEach(soundHandler.decibels, id: \.id) {decibel in
+            Circle()
+                .stroke(Color(red: min(1.0, 0.3/Double(decibel.value)),
+                              green: min(1.0,0.3/Double(decibel.value)),
+                              blue: min(1.0, 0.3/Double(decibel.value))), lineWidth: 1)
+                .frame(width: screenW * Double(decibel.value),
+                       height: screenH * Double(decibel.value))
+        }
+    }
+    
     func drawAnimatedSineCurve() -> some View {
         Curve(amp: CGFloat(soundHandler.decibel.value))
             .stroke(Color(uiColor: .random()), lineWidth: 1)
@@ -60,7 +70,8 @@ struct ContentView: View {
             Curve(amp: CGFloat(decibel.value))
 //                .stroke(Color(uiColor: .random()), lineWidth: 1)
 //                .stroke(Color(hue: 1.0, saturation: Double(decibel.value), brightness: Double(decibel.value)), lineWidth: 1)
-                .stroke(Color(hue: Double(decibel.value), saturation: 0.5, brightness: 1.0), lineWidth: 1)
+//                .stroke(Color(hue: Double(decibel.value), saturation: 0.5, brightness: 1.0), lineWidth: 1)
+                .stroke(Color(uiColor: UIColor(red: 0.7/Double(decibel.value), green: 0.7/Double(decibel.value), blue: 0.7/Double(decibel.value), alpha: 1.0)), lineWidth: 1)
 
         }
     }
@@ -132,69 +143,8 @@ extension Path {
     }
 }
 
-struct Curve: Shape {
-    var amp: CGFloat
-    var animatableData: CGFloat {
-        get { amp }
-        set { amp = newValue }
-    }
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        let start = CGPoint(x: 0, y: rect.midY)
-        path.move(to: start)
-        path.addCurve(to: CGPoint(x: rect.maxX, y: rect.midY),
-                      control1: CGPoint(x: rect.midX, y: rect.midY - (rect.height * amp)),
-                      control2: CGPoint(x: rect.midX, y: rect.midY + (rect.height * amp)))
-        return path
-    }
-}
-
-struct Line: Shape {
-    var start, end: CGPoint
-    var animatableData: AnimatablePair<CGPoint.AnimatableData, CGPoint.AnimatableData> {
-        get { AnimatablePair(start.animatableData, end.animatableData) }
-        set { (start.animatableData, end.animatableData) = (newValue.first, newValue.second) }
-    }
-    func path(in rect: CGRect) -> Path {
-        Path { p in
-            p.move(to: start)
-            p.addLine(to: end)
-        }
-    }
-}
-
-struct Arc: Shape {
-    var start: CGPoint
-    var radius: CGFloat
-//    var fill: CGFloat
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        path.addArc(center: CGPoint(x: rect.midX - (rect.midX * start.x), y: rect.midY - (rect.midY * start.y)),
-                    radius: rect.size.width * radius, startAngle: .degrees(0), endAngle: .degrees(360), clockwise: true)
-        return path
-    }
-}
-
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
-    }
-}
-
-extension UIColor {
-    static func random() -> UIColor {
-//        return UIColor(
-//           red:   .random(),
-//           green: .random(),
-//           blue:  .random(),
-//           alpha: 1.0
-//        )
-        UIColor(hue: .random(), saturation: 0.8, brightness: 1.0, alpha: 1.0)
-    }
-}
-
-extension CGFloat {
-    static func random() -> CGFloat {
-        return CGFloat(arc4random()) / CGFloat(UInt32.max)
     }
 }

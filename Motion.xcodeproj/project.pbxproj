@@ -13,6 +13,8 @@
 		721B61D1290FADF700FE6D91 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 721B61D0290FADF700FE6D91 /* Preview Assets.xcassets */; };
 		721B61D8290FAE1C00FE6D91 /* MotionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 721B61D7290FAE1C00FE6D91 /* MotionHandler.swift */; };
 		721B61DA290FCFFA00FE6D91 /* SoundHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 721B61D9290FCFFA00FE6D91 /* SoundHandler.swift */; };
+		72806CE42913CD3700A70297 /* Shapes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72806CE32913CD3700A70297 /* Shapes.swift */; };
+		72806CE62913CD5400A70297 /* UIColor+random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72806CE52913CD5400A70297 /* UIColor+random.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +25,8 @@
 		721B61D0290FADF700FE6D91 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		721B61D7290FAE1C00FE6D91 /* MotionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionHandler.swift; sourceTree = "<group>"; };
 		721B61D9290FCFFA00FE6D91 /* SoundHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundHandler.swift; sourceTree = "<group>"; };
+		72806CE32913CD3700A70297 /* Shapes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shapes.swift; sourceTree = "<group>"; };
+		72806CE52913CD5400A70297 /* UIColor+random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+random.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +65,8 @@
 				721B61CF290FADF700FE6D91 /* Preview Content */,
 				721B61D7290FAE1C00FE6D91 /* MotionHandler.swift */,
 				721B61D9290FCFFA00FE6D91 /* SoundHandler.swift */,
+				72806CE32913CD3700A70297 /* Shapes.swift */,
+				72806CE52913CD5400A70297 /* UIColor+random.swift */,
 			);
 			path = Motion;
 			sourceTree = "<group>";
@@ -145,7 +151,9 @@
 			files = (
 				721B61DA290FCFFA00FE6D91 /* SoundHandler.swift in Sources */,
 				721B61D8290FAE1C00FE6D91 /* MotionHandler.swift in Sources */,
+				72806CE42913CD3700A70297 /* Shapes.swift in Sources */,
 				721B61CC290FADF600FE6D91 /* ContentView.swift in Sources */,
+				72806CE62913CD5400A70297 /* UIColor+random.swift in Sources */,
 				721B61CA290FADF600FE6D91 /* MotionApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
