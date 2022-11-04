@@ -50,32 +50,32 @@ class MotionHandler: ObservableObject {
 
     private func readAcceleration( _ values: CMAcceleration) {
         let acceleration = Values(x: values.x, y: values.y, z: values.z)
-       // accelerations.append(acceleration)
+        accelerations.append(acceleration)
         self.acceleration = acceleration
     }
     
     private func readMagneticField(_ values: CMCalibratedMagneticField) {
         let magneticField = Values(x: values.field.x, y: values.field.x, z: values.field.z)
-      //  magneticFields.append(magneticField)
+        magneticFields.append(magneticField)
         self.magneticField = magneticField
     }
     
     private func readGravity( _ values: CMAcceleration) {
         let gravity = Values(x: values.x, y: values.y, z: values.z)
-//        gravities.append(gravity)
+        gravities.append(gravity)
         self.gravity = gravity
     }
     
     private func readRotation(_ values: CMRotationRate) {
         let rotation = Values(x: values.x, y: values.y, z: values.z)
-       // rotations.append(rotation)
+        rotations.append(rotation)
         self.rotation = rotation
     }
     
     private func readGyros(_ values: CMGyroData?) {
         guard let values = values?.rotationRate else { return }
         let gyro = Values(x: values.x, y: values.y, z: values.z)
-      //  gyros.append(rotation)
+        gyros.append(rotation)
         print(gyro)
         self.gyro = gyro
     }
