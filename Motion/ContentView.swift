@@ -12,6 +12,8 @@ struct ContentView: View {
     @StateObject var motionHandler = MotionHandler()
     @StateObject var soundHandler = SoundHandler()
     
+    @State var animationTrigger = true
+    
     var rotations: [MotionHandler.Values] {
         motionHandler.rotations
     }
@@ -32,10 +34,21 @@ struct ContentView: View {
 //            drawCircles()
 //            drawCirclesDepth()
 //            drawAnimatedSineCurve()
-//            drawSoundSineCurves()
+            drawSoundSineCurves()
+                .rotationEffect(.degrees(animationTrigger ? 90: 180))
+                .animation(.default.repeatForever(), value: animationTrigger)
+
 //            drawSoundSineArcs()
-            drawGravityValues()
-        }.edgesIgnoringSafeArea(.all)
+        }
+        .edgesIgnoringSafeArea(.all)
+        .onAppear {
+            Task {
+                
+                withAnimation(.default.speed(0.1)) {
+                    self.animationTrigger = true
+                }
+            }
+        }
     }
     
     func drawCircles() -> some View {
@@ -67,18 +80,28 @@ struct ContentView: View {
     }
     
     func drawSoundSineCurves() -> some View {
-        ForEach(soundHandler.decibels, id: \.id) {decibel in
-            ZStack {
-//                Curve(amp: CGFloat(decibel.value))
-//                    .stroke(Color(uiColor: .random()), lineWidth: 1)
-    //                .stroke(Color(hue: 1.0, saturation: Double(decibel.value), brightness: Double(decibel.value)), lineWidth: 1)
-    //                .stroke(Color(hue: Double(decibel.value), saturation: 0.5, brightness: 1.0), lineWidth: 1)
-//                    .stroke(Color(uiColor: UIColor(red: 0.7/Double(decibel.value), green: 0.7/Double(decibel.value), blue: 0.7/Double(decibel.value), alpha: 1.0)), lineWidth: 1)
-                Curve(amp: CGFloat(decibel.value))
-                    .stroke(Color(uiColor: UIColor(red: 0.7/Double(decibel.value), green: 0.7/Double(decibel.value), blue: 0.7/Double(decibel.value), alpha: 1.0)), lineWidth: 1)
-                    .rotationEffect(.degrees(20*Double(decibel.value)))
+        ZStack {
+            ForEach(soundHandler.decibels, id: \.id) {decibel in
+                ZStack {
+                    /*
+                     Curve(amp: CGFloat(decibel.value))
+                     //                    .stroke(Color(uiColor: .random()), lineWidth: 1)
+                     //                .stroke(Color(hue: 1.0, saturation: Double(decibel.value), brightness: Double(decibel.value)), lineWidth: 1)
+                     .stroke(Color(hue: Double(decibel.value), saturation: 0.5, brightness: 1.0), lineWidth: 1)
+                     //                    .stroke(Color(uiColor: UIColor(red: 0.7/Double(decibel.value), green: 0.7/Double(decibel.value), blue: 0.7/Double(decibel.value), alpha: 1.0)), lineWidth: 1)
+                     //            Curve(amp: CGFloat(decibel.value))
+                     //              .stroke(Color(uiColor: UIColor(red: 0.7/Double(decibel.value), green: 0.7/Double(decibel.value), blue: 0.7/Double(decibel.value), alpha: 1.0)), lineWidth: 1)
+                     //            .rotationEffect(.degrees(20 * Double(decibel.value)))
+                     */
+                    Arc(start: CGPoint(x: 0, y: 0),
+                        radius: CGFloat(decibel.value)/2)
+                    .stroke(Color(hue: Double(decibel.value * Float(Date.now.timeIntervalSince1970)), saturation: 0.5, brightness: 1.0), lineWidth: 1)
+                }
             }
-
+            
+           Arc(start: CGPoint(x: 0, y: 0),
+               radius: CGFloat(soundHandler.decibels.first?.value ?? 0)/2)
+           .stroke(Color.red, lineWidth: 1)
         }
     }
     
@@ -95,10 +118,9 @@ struct ContentView: View {
 //                       height: screenH * CGFloat(decibel.value))
         }
     }
-
     
     func drawLines() -> some View {
-        Path() {path in
+        Path() { path in
             path.drawLine(rotations, screenW, screenH)
         }.stroke(Color.red, lineWidth: 1)
     }
@@ -117,44 +139,6 @@ struct ContentView: View {
             path.drawCurves(motionHandler.gravities)
         }
         .stroke(Color.green, lineWidth: 5)
-    }
-    
-    func drawGravityValues() -> some View {
-        GeometryReader() { reader in
-            
-            let center = CGPoint(x: reader.size.width / 2, y: reader.size.height / 2)
-            let maxDimension = max(reader.size.width, reader.size.height)
-            var location = center
-            var angle: Double = 0
-            let limit = 10000
-            let used = min(motionHandler.gravities.count, limit)
-            let offset = motionHandler.gravities.count - used
-            ForEach(0..<100) { i in
-                Path() { path in
-                    let start = motionHandler.gravities.count*i / 100
-                    let end = motionHandler.gravities.count*(i+1) / 100
-                    
-                    path.move(to: location)
-                    motionHandler.gravities[start..<end].forEach { value in
-                        let directionToCenter = center - location
-                        let lengthToCenter = (directionToCenter.length+0.1)
-                        let normalizedDirectionToCenter = directionToCenter / lengthToCenter
-                        let inverseDistanceFromCenter = maxDimension / (lengthToCenter + 1)
-                        
-                        angle = (angle + value.x).truncatingRemainder(dividingBy: Double.pi*2)
-                        let direction = CGPoint(x: sin(angle), y: cos(angle))
-                        
-                        let cosToCenter = -normalizedDirectionToCenter * direction
-                        
-                        let length = value.y * inverseDistanceFromCenter * ((cosToCenter + 1.2)/1.2)
-                        location += direction * length
-                        path.addLine(to: location)
-                    }
-                }
-                .stroke(Color.red, lineWidth: 5)
-                .opacity(Double(i) / 100.0)
-            }
-        }
     }
     
     func drawRotation() -> some View {
@@ -193,38 +177,3 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
-
-extension CGPoint {
-    static func +(left: CGPoint, right: CGPoint) -> CGPoint {
-        return CGPoint(x: left.x + right.x, y: left.y + right.y)
-    }
-    
-    static func -(left: CGPoint, right: CGPoint) -> CGPoint {
-        return CGPoint(x: left.x - right.x, y: left.y - right.y)
-    }
-    
-    static prefix func -(left: CGPoint) -> CGPoint {
-        return CGPoint(x: -left.x, y: -left.y)
-    }
-    
-    static func +=(left: inout CGPoint, right: CGPoint) {
-        left = CGPoint(x: left.x + right.x, y: left.y + right.y)
-    }
-    
-    static func *(left: CGPoint, right: Double) -> CGPoint {
-        return CGPoint(x: left.x * right, y: left.y * right)
-    }
-    
-    static func *(left: CGPoint, right: CGPoint) -> Double {
-        return left.x * right.x + left.y * right.y
-    }
-    
-    static func /(left: CGPoint, right: Double) -> CGPoint {
-        return CGPoint(x: left.x / right, y: left.y / right)
-    }
-    
-    var length: CGFloat {
-        return sqrt(self * self)
-    }
-}
-

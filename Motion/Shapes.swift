@@ -44,8 +44,13 @@ struct Arc: Shape {
 //    var fill: CGFloat
     func path(in rect: CGRect) -> Path {
         var path = Path()
-        path.addArc(center: CGPoint(x: rect.midX - (rect.midX * start.x), y: rect.midY - (rect.midY * start.y)),
-                    radius: rect.size.width * radius, startAngle: .degrees(0), endAngle: .degrees(360), clockwise: true)
+        path.addArc(center: CGPoint(x: rect.midX - (rect.midX * start.x),
+                                    y: rect.midY - (rect.midY * start.y)),
+                    radius: rect.size.width * radius,
+                    startAngle: .degrees(0),
+                    endAngle: .radians(radius * 30),
+                    clockwise: true)
+        
         return path
     }
 }
